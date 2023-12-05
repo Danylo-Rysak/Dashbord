@@ -1,7 +1,5 @@
-import {FC} from "react";
+import { FC } from 'react';
 
-const App: FC = () => (
-    <div>Dashbord</div>
-)
+const App: FC = () => <div>Dashbord</div>;
 
 export default App;
