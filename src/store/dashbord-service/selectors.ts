@@ -5,3 +5,6 @@ export const getSalesDataSelector = (state: StoreType) => state.dashbordStore.da
 export const getSortBySelector = (state: StoreType) => state.dashbordStore.sortBy;
 
 export const getSortOrderSelector = (state: StoreType) => state.dashbordStore.sortOrder;
+
+export const getFilterBySelector = (state: StoreType) =>
+  state.dashbordStore.filterByCategory;

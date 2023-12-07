@@ -6,6 +6,7 @@ const initialState: DashbordState = {
   data: [],
   sortBy: 'revenue',
   sortOrder: 'asc',
+  filterByCategory: null,
 };
 
 const dashbordStore = createSlice({
@@ -24,9 +25,13 @@ const dashbordStore = createSlice({
     setSortOrder: (state, action: PayloadAction<'asc' | 'desc'>) => {
       state.sortOrder = action.payload;
     },
+    setFilterByCategory: (state, action: PayloadAction<string>) => {
+      state.filterByCategory = action.payload;
+    },
   },
 });
 
-export const { setSalesData, setSortBy, setSortOrder } = dashbordStore.actions;
+export const { setSalesData, setSortBy, setSortOrder, setFilterByCategory } =
+  dashbordStore.actions;
 
 export default dashbordStore.reducer;

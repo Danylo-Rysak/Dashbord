@@ -10,6 +10,7 @@ export const generateMockSalesData = (): Array<Sale> => {
   return categories.flatMap((category) =>
     Array.from({ length: 10 }, (_, i) => ({
       productId: `${category}${i + 1}`,
+      productCategory: category,
       productName: `${category} Product ${i + 1}`,
       revenue: getRandomValue(1000, 11000),
       unitsSold: getRandomValue(10, 60),
@@ -36,4 +37,8 @@ export const sortSalesData = (
         return 0;
     }
   });
+};
+
+export const getFilteredData = (data: Array<Sale>, category: string | null) => {
+  return category ? data.filter((sale) => sale.productCategory === category) : data;
 };
