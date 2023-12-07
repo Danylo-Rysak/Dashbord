@@ -17,3 +17,23 @@ export const generateMockSalesData = (): Array<Sale> => {
     }))
   );
 };
+
+export const sortSalesData = (
+  salesData: Array<Sale>,
+  sortBy: 'revenue' | 'unitsSold' | 'profitMargin',
+  sortOrder: 'asc' | 'desc'
+): Array<Sale> => {
+  return [...salesData]?.sort((a, b) => {
+    const order = sortOrder === 'asc' ? 1 : -1;
+    switch (sortBy) {
+      case 'revenue':
+        return (a.revenue - b.revenue) * order;
+      case 'unitsSold':
+        return (a.unitsSold - b.unitsSold) * order;
+      case 'profitMargin':
+        return (parseFloat(a.profitMargin) - parseFloat(b.profitMargin)) * order;
+      default:
+        return 0;
+    }
+  });
+};

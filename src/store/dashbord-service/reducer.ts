@@ -1,9 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { DashbordState } from './interfaces';
-import { Sale } from '../../core';
+import { Sale } from 'core/types';
 
 const initialState: DashbordState = {
-  data: null,
+  data: [],
+  sortBy: 'revenue',
+  sortOrder: 'asc',
 };
 
 const dashbordStore = createSlice({
@@ -13,9 +15,18 @@ const dashbordStore = createSlice({
     setSalesData: (state, action: PayloadAction<Sale[]>) => {
       state.data = action.payload;
     },
+    setSortBy: (
+      state,
+      action: PayloadAction<'revenue' | 'unitsSold' | 'profitMargin'>
+    ) => {
+      state.sortBy = action.payload;
+    },
+    setSortOrder: (state, action: PayloadAction<'asc' | 'desc'>) => {
+      state.sortOrder = action.payload;
+    },
   },
 });
 
-export const { setSalesData } = dashbordStore.actions;
+export const { setSalesData, setSortBy, setSortOrder } = dashbordStore.actions;
 
 export default dashbordStore.reducer;
