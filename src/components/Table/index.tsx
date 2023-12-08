@@ -63,7 +63,7 @@ const SalesTable: FC = () => {
   );
 
   return (
-    <div className={styles.tableContainer}>
+    <div>
       <div className={styles.tableActions}>
         <FormControl className={styles.tableFilter}>
           <InputLabel id={CATEGORY_FILTER_LABEL_ID}>Filter by Category</InputLabel>

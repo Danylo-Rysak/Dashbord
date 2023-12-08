@@ -1,0 +1,25 @@
+.title {
+    text-align: center;
+}
+
+.products {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: repeat(5, auto);
+}
+
+.comparedProducts {
+    display: flex;
+    justify-content: center;
+    gap: 50px
+}
+
+.chartsContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.chartsContainer h3 {
+    text-align: center;
+}
