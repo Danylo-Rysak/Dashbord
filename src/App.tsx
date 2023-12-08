@@ -1,12 +1,17 @@
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import SalesTable from 'components/Table';
 import { DispatchType } from 'store/root';
 import { useDispatch, useSelector } from 'react-redux';
-import { generateMockSalesData } from 'core/functions';
+import { generateMockSalesData, getFilteredData, sortSalesData } from 'core/functions';
 import { setSalesData } from 'store/dashbord-service/reducer';
 import LineChart from 'components/Chart';
 import ProductComparison from 'components/ProductComprasion';
-import { getSalesDataSelector } from 'store/dashbord-service/selectors';
+import {
+  getFilterBySelector,
+  getSalesDataSelector,
+  getSortBySelector,
+  getSortOrderSelector,
+} from 'store/dashbord-service/selectors';
 import PieChart from 'components/PieChart';
 
 const App: FC = () => {
@@ -18,12 +23,25 @@ const App: FC = () => {
   }, []);
 
   const salesData = useSelector(getSalesDataSelector);
+  const sortBy = useSelector(getSortBySelector);
+  const sortOrder = useSelector(getSortOrderSelector);
+  const filterBy = useSelector(getFilterBySelector);
+
+  const sortedSalesData = useMemo(
+    () => sortSalesData(salesData, sortBy, sortOrder),
+    [salesData, sortBy, sortOrder]
+  );
+
+  const filteredSalesData = useMemo(
+    () => getFilteredData(sortedSalesData, filterBy),
+    [sortedSalesData, filterBy]
+  );
 
   return (
     <div style={{ margin: '0 40px' }}>
-      <SalesTable />
-      <LineChart salesData={salesData} />
-      <PieChart salesData={salesData} />
+      <SalesTable salesData={filteredSalesData} />
+      <LineChart salesData={filteredSalesData} />
+      <PieChart salesData={filteredSalesData} />
       <ProductComparison />
     </div>
   );

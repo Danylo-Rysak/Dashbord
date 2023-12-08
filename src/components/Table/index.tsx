@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import {
   Table,
   TableHead,
@@ -13,15 +13,8 @@ import {
   Button,
 } from '@mui/material';
 import { CSVLink } from 'react-csv';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  getFilterBySelector,
-  getSalesDataSelector,
-  getSortBySelector,
-  getSortOrderSelector,
-} from 'store/dashbord-service/selectors';
+import { useDispatch } from 'react-redux';
 import { DispatchType } from 'store/root';
-import { getFilteredData, sortSalesData } from 'core/functions';
 import {
   setFilterByCategory,
   setSortBy,
@@ -29,16 +22,16 @@ import {
 } from 'store/dashbord-service/reducer';
 import SortableCell from './SortableCell';
 import styles from './index.module.css';
+import { Sale } from '../../core/types';
 
 const CATEGORY_FILTER_LABEL_ID = 'category-filter-label';
 
-const SalesTable: FC = () => {
-  const dispatch: DispatchType = useDispatch();
+interface SalesTableProps {
+  salesData: Array<Sale>;
+}
 
-  const salesData = useSelector(getSalesDataSelector);
-  const sortBy = useSelector(getSortBySelector);
-  const sortOrder = useSelector(getSortOrderSelector);
-  const filterBy = useSelector(getFilterBySelector);
+const SalesTable: FC<SalesTableProps> = ({ salesData }) => {
+  const dispatch: DispatchType = useDispatch();
 
   const handleSort = (
     column: 'revenue' | 'unitsSold' | 'profitMargin',
@@ -51,16 +44,6 @@ const SalesTable: FC = () => {
   const handleFilter = (category: string) => {
     dispatch(setFilterByCategory(category));
   };
-
-  const sortedSalesData = useMemo(
-    () => sortSalesData(salesData, sortBy, sortOrder),
-    [salesData, sortBy, sortOrder]
-  );
-
-  const filteredSalesData = useMemo(
-    () => getFilteredData(sortedSalesData, filterBy),
-    [sortedSalesData, filterBy]
-  );
 
   return (
     <div>
@@ -105,7 +88,7 @@ const SalesTable: FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredSalesData.map((sale) => (
+            {salesData.map((sale) => (
               <TableRow key={sale.productId}>
                 <TableCell>{sale.productName}</TableCell>
                 <TableCell align="center">{sale.revenue}</TableCell>
