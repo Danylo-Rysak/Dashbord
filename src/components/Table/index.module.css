@@ -1,0 +1,19 @@
+.tableContainer {
+    margin: 0 40px;
+    /*max-width: 1100px;*/
+}
+
+.tableRow {
+    background: #34efff;
+}
+
+.tableActions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 15px 10px 15px;
+}
+
+.tableFilter {
+    width: 200px;
+}

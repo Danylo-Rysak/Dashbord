@@ -1,5 +1,18 @@
-import { FC, useEffect } from 'react';
-import { Table, TableHead, TableBody, TableRow, TableCell, Paper } from '@mui/material';
+import { FC, useMemo } from 'react';
+import {
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  Paper,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Button,
+} from '@mui/material';
+import { CSVLink } from 'react-csv';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   getFilterBySelector,
@@ -8,15 +21,16 @@ import {
   getSortOrderSelector,
 } from 'store/dashbord-service/selectors';
 import { DispatchType } from 'store/root';
-import { generateMockSalesData, getFilteredData, sortSalesData } from 'core/functions';
+import { getFilteredData, sortSalesData } from 'core/functions';
 import {
   setFilterByCategory,
-  setSalesData,
   setSortBy,
   setSortOrder,
 } from 'store/dashbord-service/reducer';
-import arrowUp from 'assets/icons/arrow-up.svg';
-import arrowDown from 'assets/icons/arrow-down.svg';
+import SortableCell from './SortableCell';
+import styles from './index.module.css';
+
+const CATEGORY_FILTER_LABEL_ID = 'category-filter-label';
 
 const SalesTable: FC = () => {
   const dispatch: DispatchType = useDispatch();
@@ -26,88 +40,77 @@ const SalesTable: FC = () => {
   const sortOrder = useSelector(getSortOrderSelector);
   const filterBy = useSelector(getFilterBySelector);
 
-  useEffect(() => {
-    const salesData = generateMockSalesData();
-    dispatch(setSalesData(salesData));
-  }, []);
-
-  const handleSort =
-    (column: 'revenue' | 'unitsSold' | 'profitMargin', order: 'asc' | 'desc') => () => {
-      dispatch(setSortBy(column));
-      dispatch(setSortOrder(order));
-    };
+  const handleSort = (
+    column: 'revenue' | 'unitsSold' | 'profitMargin',
+    order: 'asc' | 'desc'
+  ) => {
+    dispatch(setSortBy(column));
+    dispatch(setSortOrder(order));
+  };
 
   const handleFilter = (category: string) => {
     dispatch(setFilterByCategory(category));
   };
 
-  const sortedSalesData = sortSalesData(salesData, sortBy, sortOrder);
+  const sortedSalesData = useMemo(
+    () => sortSalesData(salesData, sortBy, sortOrder),
+    [salesData, sortBy, sortOrder]
+  );
 
-  const filteredSalesData = getFilteredData(sortedSalesData, filterBy);
+  const filteredSalesData = useMemo(
+    () => getFilteredData(sortedSalesData, filterBy),
+    [sortedSalesData, filterBy]
+  );
 
   return (
-    <div>
-      <label>Filter by Category:</label>
-      <select onChange={(e) => handleFilter(e.target.value)}>
-        <option value="">All Categories</option>
-        <option value="Electronics">Electronics</option>
-        <option value="Clothing">Clothing</option>
-        <option value="Home Appliances">Home Appliances</option>
-      </select>
+    <div className={styles.tableContainer}>
+      <div className={styles.tableActions}>
+        <FormControl className={styles.tableFilter}>
+          <InputLabel id={CATEGORY_FILTER_LABEL_ID}>Filter by Category</InputLabel>
+          <Select
+            label="Filter by Category"
+            labelId={CATEGORY_FILTER_LABEL_ID}
+            onChange={(e) => handleFilter(e.target.value as string)}
+          >
+            <MenuItem value="">All Categories</MenuItem>
+            <MenuItem value="Electronics">Electronics</MenuItem>
+            <MenuItem value="Clothing">Clothing</MenuItem>
+            <MenuItem value="Home Appliances">Home Appliances</MenuItem>
+          </Select>
+        </FormControl>
+
+        <CSVLink data={salesData} filename={'sales_data.csv'}>
+          <Button variant="outlined">Download CSV</Button>
+        </CSVLink>
+      </div>
 
       <Paper>
         <Table>
           <TableHead>
-            <TableRow>
-              <TableCell>Product Name</TableCell>
-              <TableCell align="right">
-                <img
-                  src={arrowUp}
-                  alt="arrow-up"
-                  onClick={handleSort('revenue', 'desc')}
-                />
-                <b>Revenue</b>
-                <img
-                  src={arrowDown}
-                  alt="arrow-down"
-                  onClick={handleSort('revenue', 'asc')}
-                />
+            <TableRow className={styles.tableRow}>
+              <TableCell>
+                <b>Product Name</b>
               </TableCell>
-              <TableCell align="right">
-                <img
-                  src={arrowUp}
-                  alt="arrow-up"
-                  onClick={handleSort('unitsSold', 'desc')}
-                />
-                <b>Units Sold</b>
-                <img
-                  src={arrowDown}
-                  alt="arrow-down"
-                  onClick={handleSort('unitsSold', 'asc')}
-                />
-              </TableCell>
-              <TableCell align="right">
-                <img
-                  src={arrowUp}
-                  alt="arrow-up"
-                  onClick={handleSort('profitMargin', 'desc')}
-                />
-                <b>Profit Margin</b>
-                <img
-                  src={arrowDown}
-                  alt="arrow-down"
-                  onClick={handleSort('profitMargin', 'asc')}
-                />
-              </TableCell>
+              <SortableCell column="revenue" label="Revenue" handleSort={handleSort} />
+              <SortableCell
+                column="unitsSold"
+                label="Units Sold"
+                handleSort={handleSort}
+              />
+              <SortableCell
+                column="profitMargin"
+                label="Profit Margin"
+                handleSort={handleSort}
+              />
             </TableRow>
           </TableHead>
           <TableBody>
             {filteredSalesData.map((sale) => (
               <TableRow key={sale.productId}>
                 <TableCell>{sale.productName}</TableCell>
-                <TableCell align="right">{sale.revenue}</TableCell>
-                <TableCell align="right">{sale.unitsSold}</TableCell>
-                <TableCell align="right">{sale.profitMargin}</TableCell>
+                <TableCell align="center">{sale.revenue}</TableCell>
+                <TableCell align="center">{sale.unitsSold}</TableCell>
+                <TableCell align="center">{sale.profitMargin}</TableCell>
               </TableRow>
             ))}
           </TableBody>

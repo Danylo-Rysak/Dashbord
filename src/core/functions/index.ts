@@ -7,15 +7,23 @@ export const generateMockSalesData = (): Array<Sale> => {
     Math.floor(Math.random() * (max - min + 1)) + min;
   const getRandomProfitMargin = (): string => Math.random().toFixed(2);
 
+  const startDate = new Date(2023, 0, 1);
+  const currentDate = new Date(startDate);
+
   return categories.flatMap((category) =>
-    Array.from({ length: 10 }, (_, i) => ({
-      productId: `${category}${i + 1}`,
-      productCategory: category,
-      productName: `${category} Product ${i + 1}`,
-      revenue: getRandomValue(1000, 11000),
-      unitsSold: getRandomValue(10, 60),
-      profitMargin: getRandomProfitMargin(),
-    }))
+    Array.from({ length: 10 }, (_, i) => {
+      currentDate.setDate(startDate.getDate() + i);
+
+      return {
+        productId: `${category}${i + 1}`,
+        productCategory: category,
+        productName: `${category} Product ${i + 1}`,
+        revenue: getRandomValue(1000, 11000),
+        unitsSold: getRandomValue(10, 60),
+        profitMargin: getRandomProfitMargin(),
+        date: currentDate.toISOString().split('T')[0],
+      };
+    })
   );
 };
 

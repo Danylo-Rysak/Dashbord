@@ -5,4 +5,5 @@ export type Sale = {
   revenue: number;
   unitsSold: number;
   profitMargin: string;
+  date: string;
 };
